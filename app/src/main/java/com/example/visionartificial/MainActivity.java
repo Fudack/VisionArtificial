@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(intent.resolveActivity(getPackageManager()) != null){
             startActivityForResult(intent, 1);
+        } else {
+            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
