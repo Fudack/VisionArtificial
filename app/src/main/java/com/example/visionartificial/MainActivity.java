@@ -1,5 +1,7 @@
 package com.example.visionartificial;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
@@ -11,7 +13,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btncamara;
+    Button btncamara, btnguardar;
     ImageView imagePreview;
 
     @Override
@@ -20,8 +22,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btncamara = findViewById(R.id.ButtonCamera);
         imagePreview = findViewById(R.id.ImagePreview);
+        btnguardar = findViewById(R.id.image_capture_button);
 
         btncamara.setOnClickListener(view -> abrirCamara());
+        btnguardar.setOnClickListener(view -> addImageToGallery());
     }
 
     private void abrirCamara(){
@@ -41,4 +45,16 @@ public class MainActivity extends AppCompatActivity {
             imagePreview.setImageBitmap(imgBitmap);
         }
     }
+
+    public static void addImageToGallery(final String filePath, final Context context) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.MediaColumns.DATA, filePath);
+
+        context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
 }
