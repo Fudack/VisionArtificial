@@ -11,14 +11,14 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity {
 
     Button btncamara;
-    ImageView imageView;
+    ImageView imagePreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btncamara = findViewById(R.id.btncamara);
-        imageView = findViewById(R.id.imageView);
+        btncamara = findViewById(R.id.ButtonCamera);
+        imagePreview = findViewById(R.id.ImagePreview);
 
         btncamara.setOnClickListener(view -> abrirCamara());
     }
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK){
             Bundle extras = data.getExtras();
             Bitmap imgBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imgBitmap);
+            imagePreview.setImageBitmap(imgBitmap);
         }
     }
 }

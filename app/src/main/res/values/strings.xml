@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">VisionArtificial</string>
-    <string name="btncamara">foto</string>
+    <string name="ButtonCameraString">foto</string>
+    <string name="take_photo" />
+    <string name="switch_to_front_camera" />
+    <string name="pause_video" />
+    <string name="cancel_panorama" />
+    <string name="ButtonSwitchingCamera">Switching Camera</string>
 </resources>
