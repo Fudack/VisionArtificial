@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
