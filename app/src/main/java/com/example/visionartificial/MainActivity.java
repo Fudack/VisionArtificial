@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         btnguardar = findViewById(R.id.image_capture_button);
 
         btncamara.setOnClickListener(view -> abrirCamara());
-        btnguardar.setOnClickListener(view -> addImageToGallery());
+        btnguardar.setOnClickListener(view -> addImageToGallery("storage/emulated/0/Download", this));
     }
 
     private void abrirCamara(){
