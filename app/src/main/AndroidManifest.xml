@@ -8,7 +8,7 @@
     <queries />
 
     <queries>
-        <package android:name=".MainActivity" />
+        <package android:name="com.example.visionartificial" />
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
