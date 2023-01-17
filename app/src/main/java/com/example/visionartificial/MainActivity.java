@@ -1,64 +1,182 @@
 package com.example.visionartificial;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.Preview;
+import androidx.camera.core.VideoCapture;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.VisionArtificial.R;
+import com.google.common.util.concurrent.ListenableFuture;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
-    Button btncamara, btnguardar;
-    ImageView imagePreview;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+    PreviewView previewView;
+
+    Button bTakePicture, bRecording;
+    private ImageCapture imageCapture;
+    private VideoCapture videoCapture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btncamara = findViewById(R.id.ButtonCamera);
-        imagePreview = findViewById(R.id.ImagePreview);
-        btnguardar = findViewById(R.id.image_capture_button);
 
-        btncamara.setOnClickListener(view -> abrirCamara());
-        btnguardar.setOnClickListener(view -> addImageToGallery("storage/emulated/0/Download", this));
+        bTakePicture = findViewById(R.id.bCapture);
+        bRecording = findViewById(R.id.bRecord);
+        previewView = findViewById(R.id.previewView);
+
+        bTakePicture.setOnClickListener(this);
+        bRecording.setOnClickListener(this);
+
+        cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                startCameraX(cameraProvider);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }, getExecutor());
+
     }
 
-    private void abrirCamara(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(intent.resolveActivity(getPackageManager()) != null) {
-            super.startActivityForResult(intent,1);
-        } else {
-            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+    private Executor getExecutor() {
+        return ContextCompat.getMainExecutor(this);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void startCameraX(ProcessCameraProvider cameraProvider) {
+
+        cameraProvider.unbindAll();
+
+        CameraSelector cameraSelector = new CameraSelector.Builder()
+                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                .build();
+
+        Preview preview = new Preview.Builder().build();
+
+        preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+        imageCapture = new ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .build();
+
+        videoCapture = new VideoCapture.Builder()
+                .setVideoFrameRate(30)
+                .build();
+
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture);
+    }
+
+
+    @SuppressLint({"RestrictedApi", "NonConstantResourceId"})
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.bRecord: {
+                if (bRecording.getText() == "RECORD") {
+                    bRecording.setText(R.string.stop);
+                    recordVideo();
+                } else {
+                    bRecording.setText(R.string.rec);
+                    videoCapture.stopRecording();
+                }
+                break;
+            }
+            case R.id.bCapture: {
+                capturePhoto();
+                break;
+            }
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imgBitmap = (Bitmap) extras.get("data");
-            imagePreview.setImageBitmap(imgBitmap);
+    @SuppressLint("RestrictedApi")
+    private void recordVideo() {
+        if (videoCapture != null) {
+            long timeStamp = System.currentTimeMillis();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, timeStamp);
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            videoCapture.startRecording(
+                    new VideoCapture.OutputFileOptions.Builder(
+                            getContentResolver(),
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                            contentValues
+                    ).build(),
+                    getExecutor(),
+                    new VideoCapture.OnVideoSavedCallback() {
+                        @Override
+                        public void onVideoSaved(@NonNull VideoCapture.OutputFileResults outputFileResults) {
+                            Toast.makeText(MainActivity.this,"Saving...",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
+                            Toast.makeText(MainActivity.this,"Error: "+ message ,Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         }
     }
 
-    public static void addImageToGallery(final String filePath, final Context context) {
+    private void capturePhoto() {
+        long timeStamp = System.currentTimeMillis();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, timeStamp);
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
 
-        ContentValues values = new ContentValues();
 
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.MediaColumns.DATA, filePath);
+        imageCapture.takePicture(
+                new ImageCapture.OutputFileOptions.Builder(
+                        getContentResolver(),
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        contentValues
+                ).build(),
+                getExecutor(),
+                new ImageCapture.OnImageSavedCallback() {
+                    @Override
+                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                        Toast.makeText(MainActivity.this,"Saving...",Toast.LENGTH_SHORT).show();
+                    }
 
-        context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    @Override
+                    public void onError(@NonNull ImageCaptureException exception) {
+                        Toast.makeText(MainActivity.this,"Error: "+exception.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
-
-
-
-
 }
+
