@@ -57,39 +57,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
-
         }, getExecutor());
-
     }
 
     private Executor getExecutor() {
         return ContextCompat.getMainExecutor(this);
     }
-
     @SuppressLint("RestrictedApi")
     private void startCameraX(ProcessCameraProvider cameraProvider) {
-
         cameraProvider.unbindAll();
-
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                 .build();
 
         Preview preview = new Preview.Builder().build();
-
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
-
         imageCapture = new ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build();
-
         videoCapture = new VideoCapture.Builder()
                 .setVideoFrameRate(30)
                 .build();
-
         cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture);
     }
-
 
     @SuppressLint({"RestrictedApi", "NonConstantResourceId"})
     @Override
@@ -100,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     bRecording.setText(R.string.stop);
                     recordVideo();
                 } else {
-                    bRecording.setText(R.string.rec);
+                    bRecording.setText(R.string.record);
                     videoCapture.stopRecording();
                 }
                 break;
