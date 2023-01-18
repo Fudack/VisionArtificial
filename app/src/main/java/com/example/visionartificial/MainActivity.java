@@ -81,16 +81,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture);
     }
 
-    @SuppressLint({"RestrictedApi", "NonConstantResourceId"})
+    @SuppressLint({"RestrictedApi", "NonConstantResourceId", "SetTextI18n"})
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bRecord: {
                 if (bRecording.getText() == "RECORD") {
-                    bRecording.setText(R.string.stop);
+                    bRecording.setText("STOP");
                     recordVideo();
                 } else {
-                    bRecording.setText(R.string.record);
+                    bRecording.setText("RECORD");
                     videoCapture.stopRecording();
                 }
                 break;
