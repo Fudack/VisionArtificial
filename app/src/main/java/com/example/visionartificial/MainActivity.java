@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -19,6 +21,7 @@ import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -29,7 +32,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ImageAnalysis.Analyzer {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     PreviewView previewView;
 
@@ -78,7 +81,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         videoCapture = new VideoCapture.Builder()
                 .setVideoFrameRate(30)
                 .build();
-        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture);
+
+        ImageAnalysis imageAnaylsis = new ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build();
+
+
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture, imageAnaylsis);
     }
 
     @SuppressLint({"RestrictedApi", "NonConstantResourceId", "SetTextI18n"})
@@ -167,6 +176,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(MainActivity.this,"Error: "+exception.getMessage(),Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+
+    @Override
+    public void analyze(@NonNull ImageProxy image) {
+        Log.d("mainactivity_analyze", "analyze: got the frame at: " + image.getImageInfo().getTimestamp());
+        image.close();
+
     }
 }
 
