@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .build();
 
 
-        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture, imageAnaylsis);
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, videoCapture);
     }
 
     @SuppressLint({"RestrictedApi", "NonConstantResourceId", "SetTextI18n"})
