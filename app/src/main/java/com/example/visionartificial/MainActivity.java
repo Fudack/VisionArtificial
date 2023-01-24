@@ -32,7 +32,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, ImageAnalysis.Analyzer {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     PreviewView previewView;
 
@@ -172,11 +172,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+
+    /*
     @Override
     public void analyze(@NonNull ImageProxy image) {
         Log.d("mainactivity_analyze", "analyze: got the frame at: " + image.getImageInfo().getTimestamp());
         image.close();
 
-    }
+    }*/
 }
 
