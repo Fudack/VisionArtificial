@@ -66,11 +66,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, getExecutor());
     }
 
+    @NonNull
     private Executor getExecutor() {
         return ContextCompat.getMainExecutor(this);
     }
     @SuppressLint("RestrictedApi")
-    private void startCameraX(ProcessCameraProvider cameraProvider) {
+    private void startCameraX(@NonNull ProcessCameraProvider cameraProvider) {
         cameraProvider.unbindAll();
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint({"RestrictedApi", "NonConstantResourceId", "SetTextI18n"})
     @Override
-    public void onClick(View view) {
+    public void onClick(@NonNull View view) {
         switch (view.getId()) {
             case R.id.bRecord: {
                 if (bRecording.getText() == "RECORD") {
