@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     && checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this,"Acceso concedido",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"",Toast.LENGTH_SHORT).show();
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{
                         Manifest.permission.CAMERA,
@@ -194,8 +194,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(MainActivity.this,"Acceso concedido",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
         } else {
             checkPermission();
         }
