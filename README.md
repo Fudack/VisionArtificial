@@ -1,7 +1,9 @@
 # VisionArtificial Java Version
 
-### Our app: https://bit.ly/3Jsj9b5
-We can access to native Android resources and functionally do the following tasks
+### Download our APK: https://bit.ly/3Jsj9b5
+
+### Features
+Access to native Android resources and functionally do the following tasks:
 - Open camera
 - Take pictures
 - Record videos
@@ -11,7 +13,7 @@ We can access to native Android resources and functionally do the following task
   <img src="https://user-images.githubusercontent.com/89952475/214481286-05728f5a-0837-4b80-9ff7-88b0b9e248fb.jpg" title="Screenshot" width="225" height="450">
 </div>
 
-### Documentation of main library we use
+### Documentation of main library
 
 CameraX Docs:
 https://developer.android.com/training/camerax/architecture
