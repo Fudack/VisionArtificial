@@ -1,6 +1,6 @@
 # VisionArtificial Java Version
 
-### Our app: https://bit.ly/3H9y3R1
+### Our app: https://bit.ly/3Jsj9b5
 We can access to native Android resources and functionally do the following tasks
 - Open camera
 - Take pictures
